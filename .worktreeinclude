@@ -1,0 +1,4 @@
+# Gitignored files that SHOULD be copied into new git worktrees (gitignore syntax).
+# Without this, worktrees start without local secrets/config and won't run.
+.env
+.env.local

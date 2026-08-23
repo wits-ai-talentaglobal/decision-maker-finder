@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/api.ts","./src/main.tsx","./src/normalize.ts","./src/types.ts","./src/components/clearallbutton.tsx","./src/components/contactstable.tsx","./src/components/csvexportbutton.tsx","./src/components/joblist.tsx","./src/components/jobstatusbadge.tsx","./src/components/urlinputpanel.tsx","./src/hooks/usejobssocket.ts"],"version":"5.9.3"}

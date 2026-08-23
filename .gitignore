@@ -1,0 +1,40 @@
+# Secrets / local config
+.env
+!.env.example
+CLAUDE.local.md
+.claude/settings.local.json
+.claude/agent-memory-local/
+.claude/hook-activity.log
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editor cruft
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependencies / build output
+node_modules/
+dist/
+build/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# SQLite dev database
+*.db
+*.db-journal
+
+# Frontend
+frontend/node_modules/
+frontend/dist/

@@ -1,0 +1,37 @@
+{
+  "// model": "Optionally pin a model for this project, e.g. \"claude-sonnet-5\". Leave unset to use the user's default.",
+
+  "permissions": {
+    "allow": [
+      "Read(./**)",
+      "Grep(./**)",
+      "Glob(./**)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Bash(rm -rf /*)",
+      "Bash(git push --force:*)"
+    ]
+  },
+
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '\"[hook] file changed: \\(.tool_input.file_path)\"' >> \"$CLAUDE_PROJECT_DIR/.claude/hook-activity.log\""
+          }
+        ]
+      }
+    ]
+  },
+
+  "_env_note": "Project secrets load from THIS project's own .env via your normal env-loading tool/framework (e.g. dotenv), not from ~/.claude/.env or this settings.json. The env block below is for Claude Code's own process env, not app secrets.",
+  "env": {}
+}

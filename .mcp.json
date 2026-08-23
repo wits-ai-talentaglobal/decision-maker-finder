@@ -1,0 +1,14 @@
+{
+  "mcpServers": {},
+
+  "_comment": "Add team-shared MCP servers under mcpServers above; this file is committed to git. Secrets referenced via ${ENV_VAR} resolve from THIS project's own shell/.env, not from ~/.claude/.env. Purely personal/user-only MCP servers should be added instead with `claude mcp add --scope user`, not listed here. Claude Code only reads the mcpServers key, so the _example block below is inert documentation — copy an entry into mcpServers to enable it.",
+  "_example": {
+    "example-server": {
+      "command": "npx",
+      "args": ["-y", "@example/mcp-server"],
+      "env": {
+        "EXAMPLE_API_KEY": "${EXAMPLE_API_KEY}"
+      }
+    }
+  }
+}
