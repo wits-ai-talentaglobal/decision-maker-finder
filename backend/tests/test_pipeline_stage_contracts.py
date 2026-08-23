@@ -45,8 +45,46 @@ async def test_stage1_resolves_identity(fake_search_llm, monkeypatch):
 
 def test_stage1_detects_parked_domain():
     assert _looks_dead_or_parked("Domain For Sale", "buy this domain now") is True
-    assert _looks_dead_or_parked(None, None) is True
     assert _looks_dead_or_parked("Acme Corp", "we make widgets") is False
+
+
+def test_stage1_unreachable_site_is_not_treated_as_parked():
+    # A site that couldn't be fetched (e.g. blocked by bot protection) is unconfirmed,
+    # not proven dead — only actual parked-domain markers should short-circuit the stage.
+    assert _looks_dead_or_parked(None, None) is False
+
+
+@pytest.mark.asyncio
+async def test_stage1_resolves_identity_via_llm_when_site_fetch_is_blocked(monkeypatch):
+    async def fake_fetch_site_snapshot(domain):
+        return None, None  # simulates a 403 from bot protection on both schemes
+
+    monkeypatch.setattr(
+        "app.pipeline.stage1_identity.fetch_site_snapshot", fake_fetch_site_snapshot
+    )
+    llm = FakeSearchLLMClient(name="Globe Telecom", linkedin_url="https://linkedin.com/company/globe-telecom")
+
+    result = await resolve_company_identity(
+        IdentityInput(job_id=1, normalized_domain="globe.com.ph"), llm
+    )
+    assert result.company_name == "Globe Telecom"
+
+
+@pytest.mark.asyncio
+async def test_stage1_raises_when_site_unreachable_and_llm_also_fails(monkeypatch):
+    async def fake_fetch_site_snapshot(domain):
+        return None, None
+
+    monkeypatch.setattr(
+        "app.pipeline.stage1_identity.fetch_site_snapshot", fake_fetch_site_snapshot
+    )
+    llm = FakeSearchLLMClient(name=None)
+
+    with pytest.raises(StageFailure) as exc_info:
+        await resolve_company_identity(
+            IdentityInput(job_id=1, normalized_domain="totally-unknown-domain.example"), llm
+        )
+    assert exc_info.value.stage == PipelineStage.RESOLVE_IDENTITY
 
 
 @pytest.mark.asyncio

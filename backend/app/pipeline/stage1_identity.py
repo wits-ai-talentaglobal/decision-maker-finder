@@ -43,8 +43,9 @@ async def fetch_site_snapshot(domain: str) -> tuple[str | None, str | None]:
 
 
 def _looks_dead_or_parked(title: str | None, text: str | None) -> bool:
-    if title is None and text is None:
-        return True
+    # A failed fetch (title and text both None) only means we couldn't confirm the
+    # site's content — e.g. bot protection blocking the request — not that the domain
+    # is dead. Only the actual parked-domain markers count as confirmed dead/parked.
     haystack = f"{title or ''} {text or ''}".lower()
     return any(marker in haystack for marker in _PARKED_MARKERS)
 
