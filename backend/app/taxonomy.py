@@ -35,6 +35,8 @@ DEFAULT_TAXONOMY_SEED: list[tuple[str, str]] = [
     ("Chief Revenue Officer", "cxo"),
     ("CHRO", "cxo"),
     ("Chief Human Resources Officer", "cxo"),
+    ("CCO", "cxo"),
+    ("Chief Customer Officer", "cxo"),
     # Directors
     ("Director", "director"),
     ("Managing Director", "director"),
@@ -53,6 +55,11 @@ DEFAULT_TAXONOMY_SEED: list[tuple[str, str]] = [
     ("Head of Finance", "department_head"),
     ("Head of HR", "department_head"),
     ("Head of Human Resources", "department_head"),
+    # Mid-level department titles — kept in sync with the equivalent insertions in
+    # frontend/src/data/icpTitles.ts (Finance/Human Resources/IT-Engineering).
+    ("Controller", "mid_level"),
+    ("HR Business Partner", "mid_level"),
+    ("Staff Engineer / Tech Lead", "mid_level"),
 ]
 
 

@@ -1,4 +1,16 @@
-export const EXECUTIVE_TITLES = ["CEO", "Founder", "Owner", "President"] as const;
+export const EXECUTIVE_TITLES = [
+  "CEO",
+  "Founder",
+  "Owner",
+  "President",
+  "CRO",
+  "CMO",
+  "COO",
+  "CFO",
+  "CHRO",
+  "CTO",
+  "CCO",
+] as const;
 
 export const DEPARTMENT_TITLES: Record<string, readonly string[]> = {
   Sales: [
@@ -26,6 +38,7 @@ export const DEPARTMENT_TITLES: Record<string, readonly string[]> = {
   Finance: [
     "VP of Finance",
     "Director of Finance",
+    "Controller",
     "Finance Manager",
     "Senior Financial Analyst",
     "Financial Analyst",
@@ -33,6 +46,7 @@ export const DEPARTMENT_TITLES: Record<string, readonly string[]> = {
   "Human Resources": [
     "VP of HR",
     "Director of HR",
+    "HR Business Partner",
     "HR Manager",
     "Senior HR Generalist",
     "HR Generalist",
@@ -41,6 +55,7 @@ export const DEPARTMENT_TITLES: Record<string, readonly string[]> = {
     "VP of Engineering",
     "Director of Engineering",
     "Engineering Manager",
+    "Staff Engineer / Tech Lead",
     "Senior Engineer",
     "Engineer",
   ],
@@ -54,3 +69,10 @@ export const DEPARTMENT_TITLES: Record<string, readonly string[]> = {
 };
 
 export const DEPARTMENT_NAMES = Object.keys(DEPARTMENT_TITLES);
+
+// The top-ranked title in a department's hierarchy (index 0) is the closest thing
+// to a "department head" — there's no separate literal title for that concept, so
+// any UI that needs to display it should derive it here rather than hardcoding one.
+export function getDepartmentHead(department: string): string | undefined {
+  return DEPARTMENT_TITLES[department]?.[0];
+}
