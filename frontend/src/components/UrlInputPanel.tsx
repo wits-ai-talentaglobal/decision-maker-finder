@@ -1,9 +1,16 @@
 import { useMemo, useState } from "react";
 import { parseUrlList } from "../normalize";
-import type { BatchEstimate } from "../types";
+import type { BatchEstimate, TargetTitles } from "../types";
+import { IcpTitleSelector } from "./IcpTitleSelector";
+
+const EMPTY_TARGET_TITLES: TargetTitles = { executive: [], departments: {} };
 
 interface UrlInputPanelProps {
-  onSubmit: (urlsText: string, confirmed: boolean) => Promise<BatchEstimate | null>;
+  onSubmit: (
+    urlsText: string,
+    confirmed: boolean,
+    targetTitles: TargetTitles
+  ) => Promise<BatchEstimate | null>;
 }
 
 export function UrlInputPanel({ onSubmit }: UrlInputPanelProps) {
@@ -11,6 +18,8 @@ export function UrlInputPanel({ onSubmit }: UrlInputPanelProps) {
   const [pendingEstimate, setPendingEstimate] = useState<BatchEstimate | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [targetTitles, setTargetTitles] = useState<TargetTitles>(EMPTY_TARGET_TITLES);
+  const [selectorKey, setSelectorKey] = useState(0);
 
   const parsed = useMemo(() => parseUrlList(urlsText), [urlsText]);
 
@@ -18,12 +27,14 @@ export function UrlInputPanel({ onSubmit }: UrlInputPanelProps) {
     setSubmitting(true);
     setError(null);
     try {
-      const estimate = await onSubmit(urlsText, confirmed);
+      const estimate = await onSubmit(urlsText, confirmed, targetTitles);
       if (estimate) {
         setPendingEstimate(estimate);
       } else {
         setPendingEstimate(null);
         setUrlsText("");
+        setTargetTitles(EMPTY_TARGET_TITLES);
+        setSelectorKey((k) => k + 1);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -34,6 +45,8 @@ export function UrlInputPanel({ onSubmit }: UrlInputPanelProps) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <IcpTitleSelector key={selectorKey} onChange={setTargetTitles} />
+
       <label htmlFor="urls-input" style={{ fontWeight: 600 }}>
         Website URLs (one per line, or comma/space separated)
       </label>

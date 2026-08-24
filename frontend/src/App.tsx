@@ -6,7 +6,7 @@ import { CsvExportButton } from "./components/CsvExportButton";
 import { JobList } from "./components/JobList";
 import { UrlInputPanel } from "./components/UrlInputPanel";
 import { useJobsSocket } from "./hooks/useJobsSocket";
-import type { BatchEstimate, Company, Job } from "./types";
+import type { BatchEstimate, Company, Job, TargetTitles } from "./types";
 
 async function refreshAll(setJobs: (jobs: Job[]) => void, setCompanies: (c: Company[]) => void) {
   const [jobs, companies] = await Promise.all([fetchJobs(), fetchCompanies()]);
@@ -30,8 +30,12 @@ export default function App() {
   }, []);
   useJobsSocket(handleWsUpdate);
 
-  async function handleSubmit(urlsText: string, confirmed: boolean): Promise<BatchEstimate | null> {
-    const result = await submitJobs(urlsText, confirmed);
+  async function handleSubmit(
+    urlsText: string,
+    confirmed: boolean,
+    targetTitles: TargetTitles
+  ): Promise<BatchEstimate | null> {
+    const result = await submitJobs(urlsText, confirmed, targetTitles);
     if (isBatchEstimate(result)) {
       return result;
     }

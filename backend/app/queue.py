@@ -41,7 +41,7 @@ from app.schemas import (
     EnrichInput,
     IdentityInput,
 )
-from app.taxonomy import get_active_titles
+from app.taxonomy import get_titles_for_job
 from app.ws_manager import ws_manager
 
 logger = logging.getLogger(__name__)
@@ -75,7 +75,7 @@ class JobQueue:
                 )
 
     async def _run_pipeline(self, job: Job, session: AsyncSession) -> None:
-        active_titles = await get_active_titles(session)
+        active_titles = await get_titles_for_job(job, session)
 
         # --- Stage 1: Company Identity Resolution ---
         await self._set_status(job, session, PipelineStage.RESOLVE_IDENTITY)

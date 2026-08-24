@@ -33,6 +33,9 @@ class Job(Base):
         Enum(JobStatus), nullable=False, default=JobStatus.QUEUED
     )
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # JSON-serialized TargetTitles (see schemas.py), set at submission time. When
+    # null/empty, the pipeline falls back to the default DB taxonomy for this job.
+    target_titles: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow

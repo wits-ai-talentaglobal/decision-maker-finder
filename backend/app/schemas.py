@@ -9,9 +9,18 @@ from app.models import JobStatus
 # ---------------------------------------------------------------------------
 
 
+class TargetTitles(BaseModel):
+    """User-supplied ICP title selection for a job batch. When non-empty, this
+    overrides the default DB-driven taxonomy for that batch's title matching."""
+
+    executive: list[str] = []
+    departments: dict[str, list[str]] = {}
+
+
 class JobSubmitRequest(BaseModel):
     urls_text: str
     confirmed: bool = False
+    target_titles: TargetTitles | None = None
 
 
 class BatchEstimate(BaseModel):

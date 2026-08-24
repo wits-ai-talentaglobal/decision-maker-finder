@@ -53,9 +53,18 @@ async def submit_jobs(
     if estimate.requires_confirmation and not request.confirmed:
         return estimate
 
+    target_titles_json = (
+        request.target_titles.model_dump_json() if request.target_titles else None
+    )
+
     jobs: list[Job] = []
     for domain in valid_domains:
-        job = Job(input_url=domain, normalized_domain=domain, status=JobStatus.QUEUED)
+        job = Job(
+            input_url=domain,
+            normalized_domain=domain,
+            status=JobStatus.QUEUED,
+            target_titles=target_titles_json,
+        )
         session.add(job)
         jobs.append(job)
 

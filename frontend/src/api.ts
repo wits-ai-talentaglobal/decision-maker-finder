@@ -1,4 +1,4 @@
-import type { BatchEstimate, ClearJobsResult, Company, Job } from "./types";
+import type { BatchEstimate, ClearJobsResult, Company, Job, TargetTitles } from "./types";
 
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
@@ -10,12 +10,21 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
 export async function submitJobs(
   urlsText: string,
-  confirmed: boolean
+  confirmed: boolean,
+  targetTitles: TargetTitles
 ): Promise<Job[] | BatchEstimate> {
+  const hasSelection =
+    targetTitles.executive.length > 0 ||
+    Object.values(targetTitles.departments).some((titles) => titles.length > 0);
+
   const response = await fetch("/jobs", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ urls_text: urlsText, confirmed }),
+    body: JSON.stringify({
+      urls_text: urlsText,
+      confirmed,
+      ...(hasSelection ? { target_titles: targetTitles } : {}),
+    }),
   });
   return handleResponse<Job[] | BatchEstimate>(response);
 }

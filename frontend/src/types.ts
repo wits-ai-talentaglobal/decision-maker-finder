@@ -43,6 +43,11 @@ export interface Job {
   company: Company | null;
 }
 
+export interface TargetTitles {
+  executive: string[];
+  departments: Record<string, string[]>;
+}
+
 export interface BatchEstimate {
   url_count: number;
   invalid_entries: string[];

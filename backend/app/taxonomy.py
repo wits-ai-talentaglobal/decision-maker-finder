@@ -1,7 +1,9 @@
+import json
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import TitleTaxonomy
+from app.models import Job, TitleTaxonomy
 
 # Default seed list: general-purpose leadership taxonomy (CEO/owner/founder/partner,
 # CXO, directors, department heads). This is only a *seed* — the source of truth is
@@ -59,6 +61,23 @@ async def get_active_titles(session: AsyncSession) -> list[str]:
         select(TitleTaxonomy.label).where(TitleTaxonomy.is_active.is_(True))
     )
     return [row[0] for row in result.all()]
+
+
+async def get_titles_for_job(job: Job, session: AsyncSession) -> list[str]:
+    """Flattened per-job ICP title override, falling back to the default DB
+    taxonomy when the job has no selection, malformed data, or an empty one."""
+    if job.target_titles:
+        try:
+            parsed = json.loads(job.target_titles)
+        except (json.JSONDecodeError, TypeError):
+            parsed = None
+        if parsed:
+            flat: list[str] = list(parsed.get("executive") or [])
+            for titles in (parsed.get("departments") or {}).values():
+                flat.extend(titles)
+            if flat:
+                return flat
+    return await get_active_titles(session)
 
 
 async def seed_default_taxonomy(session: AsyncSession) -> None:
